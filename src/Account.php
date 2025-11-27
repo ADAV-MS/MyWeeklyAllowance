@@ -9,61 +9,92 @@ namespace App;
  */
 final class Account
 {
-    // Solde actuel du compte (0 par défaut)
     private float $solde = 0.0;
-
-    // Allocation hebdomadaire (0 par défaut)
     private float $allocationHebdo = 0.0;
-
-    // Nom et email de l'adolescent
     private string $nom;
     private string $email;
 
     /**
-     * Crée un nouveau compte avec solde initial 0
+     * Crée un compte valide avec solde initial 0
      */
     public function __construct(string $nom, string $email)
     {
-        $this->nom = $nom;
+        $this->validerNom($nom);
+        $this->validerEmail($email);
+        $this->nom = trim($nom);
         $this->email = $email;
     }
 
-    // Retourne le solde actuel
+    /**
+     * Getters publics
+     */
     public function getSolde(): float
     {
         return $this->solde;
     }
 
-    // Ajoute de l'argent au solde
+    public function getAllocationHebdomadaire(): float
+    {
+        return $this->allocationHebdo;
+    }
+
+    /**
+     * Actions métier avec validations
+     */
     public function deposer(float $montant): void
     {
+        $this->validerMontantPositif($montant);
         $this->solde += $montant;
     }
 
-    // Retire de l'argent (exception si solde insuffisant)
     public function depense(float $montant): void
     {
+        $this->validerMontantPositif($montant);
         if ($montant > $this->solde) {
             throw new \InvalidArgumentException('Solde insuffisant');
         }
         $this->solde -= $montant;
     }
 
-    // Définit l'allocation hebdomadaire
     public function fixerAllocationHebdomadaire(float $montant): void
     {
+        $this->validerMontantNonNegatif($montant);
         $this->allocationHebdo = $montant;
     }
 
-    // Retourne l'allocation hebdomadaire
-    public function getAllocationHebdomadaire(): float
-    {
-        return $this->allocationHebdo;
-    }
-
-    // Ajoute l'allocation au solde
     public function appliquerAllocation(): void
     {
         $this->solde += $this->allocationHebdo;
+    }
+
+    /**
+     * Méthodes de validation privées
+     */
+    private function validerNom(string $nom): void
+    {
+        if (empty(trim($nom))) {
+            throw new \InvalidArgumentException('Le nom ne peut pas être vide');
+        }
+    }
+
+    private function validerEmail(string $email): void
+    {
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            throw new \InvalidArgumentException('Email invalide');
+        }
+    }
+
+    private function validerMontantPositif(float $montant): void
+    {
+        if ($montant <= 0) {
+            throw new \InvalidArgumentException('Le montant doit être positif');
+        }
+    }
+
+    private function validerMontantNonNegatif(float $montant): void
+    {
+        if ($montant < 0) {
+            throw new \InvalidArgumentException('L\'allocation ne peut pas être négative');
+        }
     }
 }
