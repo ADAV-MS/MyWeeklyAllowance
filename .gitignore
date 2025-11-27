@@ -1,14 +1,6 @@
-# Test Complete ignore files: https://support.smartbear.com/viewarticle/68002/
+# Dépendances
+vendor/
 
-# Tester-specific Settings
-*.tcCFGExtender
-*.tcLS
-
-# Type library declarations
-*.tlb
-
-# Log files
-*.tcLogs
-
-# Backup files
-*.bak
+# PHPUnit
+.phpunit.result.cache
+/phpunit.result.cache.*
